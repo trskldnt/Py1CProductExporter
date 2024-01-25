@@ -162,7 +162,8 @@ try:
         logging.error(f"Ошибка кнопки Загрузить запчасти на склад: {e}")
         sys.exit(1)
 
-    time.sleep(5)
+    logging.info("Загрузка прайса на Автопро завершена")
+    time.sleep(3)
     # WebDriverWait(driver, 200).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "reg > div.panel.panel-danger > div.panel-footer.flex.vertical.align-center > form > div > button"))).click()
 
 except Exception as e:
