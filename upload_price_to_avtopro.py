@@ -13,14 +13,17 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException,
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 # Разбор аргументов командной строки
-parser = argparse.ArgumentParser(description="Автоматизация загрузки файла на сайт.")
+parser = argparse.ArgumentParser(description="Автоматизация загрузки файла на сайт Avtopto.")
 parser.add_argument('--login', help="Логин пользователя", required=True)
 parser.add_argument('--password', help="Пароль пользователя", required=True)
 parser.add_argument('--file', help="Имя файла для загрузки", required=True)
+parser.add_argument('--wh', help="Номер склада", required=True)
 args = parser.parse_args()
 
 login = args.login
 password = args.password
+warehouse_number = args.wh
+warehouse_url = "https://avto.pro/warehouses/" + warehouse_number
 file_name = args.file
 file_path = os.path.join(os.getcwd(), file_name)
 
@@ -63,8 +66,8 @@ try:
         sys.exit(1)
 
     try:
-        driver.get('https://avto.pro/warehouses/262681/')
-        driver.get('https://avto.pro/warehouses/262681/')
+        driver.get(warehouse_url)
+        driver.get(warehouse_url)
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.TAG_NAME, "body")))  # Пример ожидания загрузки элемента
         logging.info("Страница склада успешно загружена.")
     except Exception as e:
@@ -168,5 +171,3 @@ except Exception as e:
     sys.exit(1)
 finally:
     driver.quit()
-
-
