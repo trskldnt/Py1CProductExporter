@@ -7,7 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, NoAlertPresentException
-
+import time
 
 # Настройка логирования
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -162,7 +162,7 @@ try:
         logging.error(f"Ошибка кнопки Загрузить запчасти на склад: {e}")
         sys.exit(1)
 
-
+    time.sleep(5)
     # WebDriverWait(driver, 200).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "reg > div.panel.panel-danger > div.panel-footer.flex.vertical.align-center > form > div > button"))).click()
 
 except Exception as e:
