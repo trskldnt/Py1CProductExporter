@@ -2,11 +2,13 @@ import argparse
 import os
 import sys
 import logging
-import undetected_chromedriver as uc
+# import undetected_chromedriver as uc
+from seleniumbase import Driver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, NoAlertPresentException
+from selenium.webdriver.chrome.options import Options
 import time
 
 # Настройка логирования
@@ -24,6 +26,7 @@ login = args.login
 password = args.password
 warehouse_number = args.wh
 warehouse_url = "https://avto.pro/warehouses/" + warehouse_number
+upload_warehouse_url = "https://avto.pro/pricelist/.aspx?skladId=" + warehouse_number
 file_name = args.file
 file_path = os.path.join(os.getcwd(), file_name)
 
@@ -34,7 +37,10 @@ if not os.path.exists(file_path):
 
 
 try:
-    driver = uc.Chrome(use_subprocess=False)
+    # driver = uc.Chrome(use_subprocess=False)
+    # driver = Driver(uc=True, headed=True)
+    driver = Driver(uc=True)
+    # driver.implicitly_wait(10)
     driver.get('https://avto.pro')
 
     # Попытка найти и нажать на кнопку cookie
@@ -65,26 +71,32 @@ try:
         logging.error(f"Ошибка при попытке входа в систему: {e}")
         sys.exit(1)
 
+    time.sleep(2)
+
+    
+
     try:
-        driver.get(warehouse_url)
-        driver.get(warehouse_url)
+        driver.get(upload_warehouse_url)
+        driver.get(upload_warehouse_url)
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.TAG_NAME, "body")))  # Пример ожидания загрузки элемента
         logging.info("Страница склада успешно загружена.")
     except Exception as e:
         logging.error(f"Ошибка при загрузке страницы: {e}")
         sys.exit(1)
 
+    time.sleep(4)
 
-    try:
-        button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#wh-app-container > section > div > div.add-parts > div:nth-child(2) > button")))
-        button.click()
-        logging.info("Переход на страницу загрузки прайса")
-    except Exception as e:
-        logging.error(f"Переход на страницу загрузки прайса: {e}")
-        sys.exit(1)
+    # try:
+    #     button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#wh-app-container > section > div > div.add-parts > div:nth-child(2) > button")))
+    #     button.click()
+    #     logging.info("Переход на страницу загрузки прайса")
+    # except Exception as e:
+    #     logging.error(f"Переход на страницу загрузки прайса: {e}")
+    #     sys.exit(1)
 
 
-    
+    time.sleep(2)
+
     # Попытка найти и нажать на кнопку cookie
     try:
         cookie_button = WebDriverWait(driver, 7).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#btn-cancelpriceuploading")))
@@ -105,16 +117,20 @@ try:
         except NoAlertPresentException:
             logging.info("Всплывающее окно не появилось.")        
 
-        try:
-            button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#wh-app-container > section > div > div.add-parts > div:nth-child(2) > button")))
-            button.click()
-            logging.info("Переход на страницу загрузки прайса2")
-        except Exception as e:
-            logging.error(f"Переход на страницу загрузки прайса2: {e}")
-            sys.exit(1)
+        # try:
+        #     button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#wh-app-container > section > div > div.add-parts > div:nth-child(2) > button")))
+        #     button.click()
+        #     logging.info("Переход на страницу загрузки прайса2")
+        # except Exception as e:
+        #     logging.error(f"Переход на страницу загрузки прайса2: {e}")
+        #     sys.exit(1)
+        driver.get(upload_warehouse_url)
+        driver.get(upload_warehouse_url)
+        time.sleep(2)
     except Exception as e:
         logging.info(f"незавершенной загрузки прайса не найдена. Продолжаем.")
 
+    time.sleep(3)
 
     # Загрузка файла
     try:
@@ -126,6 +142,8 @@ try:
         logging.error(f"Ошибка при загрузке файла: {e}")
         sys.exit(1)
 
+    time.sleep(2)
+
     # Завершение процесса
     try:
         WebDriverWait(driver, 120).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#reg > div.panel.panel-danger > div.panel-footer.flex.vertical.align-center > form > div > button"))).click()
@@ -134,6 +152,7 @@ try:
         logging.error(f"Ошибка при завершении процесса: {e}")
         sys.exit(1)
 
+    time.sleep(2)
 
     try:
         # Объединение селекторов
